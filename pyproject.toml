@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "avatars-as-a-service"
+version = "0.1.0"
+description = "a fun project for generating avatars using AI"
+authors = ["Lewis Munyi <lewismunyiii@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.108.0"
+uvicorn = {extras = ["standard"], version = "^0.25.0"}
+openai = "^1.6.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
