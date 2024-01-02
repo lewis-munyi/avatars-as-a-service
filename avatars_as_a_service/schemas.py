@@ -1,10 +1,10 @@
 import os
 
-from pydantic import BaseModel
 from typing import Union
 from openai import OpenAI
+from pydantic import BaseModel
 
-from avatars_as_a_service.serializers.AvatarFeatures import Mood, HeadShape, EyeColor, SkinTone, SmileType, NoseType
+from avatars_as_a_service.enums.AvatarFeatures import Mood, HeadShape, EyeColor, SkinTone, SmileType, NoseType
 
 class Avatar(BaseModel):
     skin_tone: Union[SkinTone, None]
@@ -62,17 +62,28 @@ class Avatar(BaseModel):
 
             res = AvatarResult()
             res.image_url = response.data[0].url
+            res.image_hash = self.hash_avatar()
             return res
 
         except Exception as e:
             print(str(e))
 
+    def hash_avatar(self) -> str:
+        if self.description:
+            return ''
+
+        features = f'{self.head_shape}+{self.eye_color}+{self.skin_tone}+{self.glasses}+{self.smile_type}+{self.nose_type}+{self.mood}'
+        return str(hash(features))
+
 class AvatarResult(BaseModel):
     image_url: str = None
+    image_hash: str = None
 
 class AvatarRequest(BaseModel):
     properties: Avatar
+    disable_cache: bool = True
 
 class AvatarResponse(BaseModel):
     data: AvatarResult = None
     prompt: str = None
+    cache_hit: bool = False
