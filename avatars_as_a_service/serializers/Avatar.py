@@ -1,8 +1,8 @@
 import os
 
-from pydantic import BaseModel
 from typing import Union
 from openai import OpenAI
+from pydantic import BaseModel
 
 from avatars_as_a_service.serializers.AvatarFeatures import Mood, HeadShape, EyeColor, SkinTone, SmileType, NoseType
 
