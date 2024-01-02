@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from avatars_as_a_service.serializers.Avatar import AvatarRequest, AvatarResponse
+from avatars_as_a_service.schemas import AvatarRequest, AvatarResponse
 
 app = FastAPI()
 
