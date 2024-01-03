@@ -1,5 +1,5 @@
 
-name: Publish latest prod image
+name: Publish release to Docker Hub
 
 # Configures this workflow to run every time a release is published.
 on:
@@ -24,17 +24,26 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: lewismunyi/avatars-as-a-service
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service
 
       - name: Set Docker tag
         id: set_tag
         run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
+#        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
+#        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ github.event.release.tag_name }}
+#        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: lewismunyi/avatars-as-a-service:${{  steps.set_tag.outputs.tag }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build Docker Image
+        run: docker build -t ${{ steps.set_tag.outputs.tag }} .
+
+      - name: Push Docker Image
+        run: docker push lewismunyi/avatars-as-a-service:${{ steps.set_tag.outputs.tag }}
+
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+#        with:
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{  steps.set_tag.outputs.tag }}
+#          labels: ${{ steps.meta.outputs.labels }}
