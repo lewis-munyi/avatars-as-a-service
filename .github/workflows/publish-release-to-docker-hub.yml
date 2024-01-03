@@ -28,7 +28,8 @@ jobs:
 
       - name: Set Docker tag
         id: set_tag
-        run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
+        run: echo ::set-output name=tag::$(github.event.release.tag_name)
+#        run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
 #        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
 #        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ github.event.release.tag_name }}
 #        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
