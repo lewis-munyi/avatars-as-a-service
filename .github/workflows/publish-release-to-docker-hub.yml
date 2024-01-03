@@ -37,7 +37,7 @@ jobs:
         run: docker build -t ${{ steps.set_tag.outputs.tag }} .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ steps.set_tag.outputs.tag }}
+        run: docker push lewismunyi/avatars-as-a-service:${{ steps.set_tag.outputs.tag }}
 
 #      - name: Build and push Docker image
 #        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
