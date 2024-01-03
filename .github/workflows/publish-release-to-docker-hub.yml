@@ -10,7 +10,7 @@ jobs:
   build-and-push-image:
     name: Push docker image to Docker Hub
     runs-on: ubuntu-latest
-    steps:ta
+    steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
@@ -24,13 +24,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: lewismunyi/avatars-as-a-service
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service
 
       - name: Set Docker tag
         id: set_tag
 #        run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
 #        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
-        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ github.event.release.tag_name }}
+        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
 
 
       - name: Build and push Docker image
