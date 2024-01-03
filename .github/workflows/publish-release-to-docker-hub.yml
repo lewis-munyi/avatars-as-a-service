@@ -28,16 +28,22 @@ jobs:
 
       - name: Set Docker tag
         id: set_tag
-#        run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
+        run: echo ::set-output name=tag::$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
 #        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
-        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:$(echo $GITHUB_REF | awk 'BEGIN{FS="/"} {print $3}')
+#        run: echo ::set-output name=tag::${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ github.event.release.tag_name }}
+#        run: echo ::set-output name=tag::${GITHUB_ACTOR}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
 
+      - name: Build Docker Image
+        run: docker build -t ${{ steps.set_tag.outputs.tag }} .
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{  steps.set_tag.outputs.tag }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/avatars-as-a-service:${{ steps.set_tag.outputs.tag }}
+
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+#        with:
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{  steps.set_tag.outputs.tag }}
+#          labels: ${{ steps.meta.outputs.labels }}
