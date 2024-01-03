@@ -4,7 +4,7 @@ name: Publish latest prod image
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
   push:
-    branches: ['master']
+    branches: ['master', 'actions']
 
 jobs:
   build-and-push-image:
@@ -32,5 +32,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: latest
+          tags: lewismunyi/avatars-as-a-service:latest
           labels: ${{ steps.meta.outputs.labels }}
