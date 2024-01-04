@@ -16,6 +16,7 @@ def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult
 
     return result
 
+
 def write_to_cache(result: AvatarResult, db: Session) -> bool:
     # Todo: Attempt to write result to cache
     # This method should write an Avatar model to the table. It takes an AvatarResult object nad returns tru if it writes it
@@ -27,7 +28,7 @@ def write_to_cache(result: AvatarResult, db: Session) -> bool:
             db.add(Avatar(**result.dict()))
         return True
     except Exception as e:
-        raise RuntimeError("An unexpected error occurred: " + str(e))    
+        raise RuntimeError("An unexpected error occurred: " + str(e))
 
 
 def search_cache(avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 100) -> AvatarResult or None:
@@ -41,21 +42,29 @@ def search_cache(avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 
 
 def avatar_search(request: AvatarRequest, db: Session) -> AvatarResponse:
     # Only true if a query is returned from the DB not OpenAI
-    prompt: str = request.properties.generate_prompt()
+    search_result: AvatarResult
+    cache_hit: bool = False
+    # prompt: str = request.properties.generate_prompt()
+
+    # print(type(request.properties))
+    # print(request.properties)
+    # print(type(request.properties.generate_prompt))
 
     if request.disable_cache:  # Search Dall-e
-        search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db, cache=False)  # Search dall-e and don't cache the result
+        search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db,
+                                                    cache=False)  # Search dall-e and don't cache the result
 
     else:  # Search cache
         query_result = search_cache(avatar=request.properties, db=db)
-        if query_result is None:                                      # Cache miss
-            search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db)  # Browse image and attempt to cache the result
-        else:                                                         # Cache hit
+        if query_result is None:  # Cache miss
+            search_result: AvatarResult = search_dall_e(avatar=request.properties,
+                                                        db=db)  # Browse image and attempt to cache the result
+        else:  # Cache hit
             cache_hit: bool = True
             search_result: AvatarResult = query_result
 
     result = AvatarResponse()
     result.data = search_result
     result.cache_hit = cache_hit
-    result.prompt = prompt
+    result.prompt = ""
     return result
