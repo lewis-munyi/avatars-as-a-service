@@ -17,6 +17,7 @@ class Avatar(BaseModel):
     description: Union[str, None] = None
 
     # Method used to generate a prompt string from the various properties supplied
+    @property
     def generate_prompt(self) -> str:
         if self.description and self.description != '':  # If a description is provided then it will override the other Avatar properties
             return self.description
@@ -48,7 +49,7 @@ class Avatar(BaseModel):
                 prompt += f'and make it official and/or office appropriate.'
 
         return prompt
-
+    # TODO: remove this from Avatar class and make it a util 
     def dall_e_2_search(self):
         try:
             client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'), )
@@ -64,7 +65,7 @@ class Avatar(BaseModel):
             res.image_url = response.data[0].url
             res.image_hash = self.hash_avatar()
             return res
-
+        # TODO: raise Exception
         except Exception as e:
             print(str(e))
 
@@ -80,7 +81,7 @@ class AvatarResult(BaseModel):
     image_hash: str = None
 
 class AvatarRequest(BaseModel):
-    properties: Avatar
+    properties: Avatar 
     disable_cache: bool = True
 
 class AvatarResponse(BaseModel):

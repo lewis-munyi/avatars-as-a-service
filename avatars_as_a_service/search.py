@@ -40,20 +40,19 @@ def search_cache(avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 
 
 
 def avatar_search(request: AvatarRequest, db: Session) -> AvatarResponse:
-    # search_result: AvatarResult
-    # cache_hit: bool = False                                           # Only true if a query is returned from the DB not OpenAI
-    # prompt: str = request.properties.generate_prompt()
+    # Only true if a query is returned from the DB not OpenAI
+    prompt: str = request.properties.generate_prompt()
 
     if request.disable_cache:  # Search Dall-e
-        search_result = search_dall_e(avatar=request.properties, db=db, cache=False)  # Search dall-e and don't cache the result
+        search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db, cache=False)  # Search dall-e and don't cache the result
 
     else:  # Search cache
-        query_result = search_cache(avatar=request.properties)
+        query_result = search_cache(avatar=request.properties, db=db)
         if query_result is None:                                      # Cache miss
-            search_result = search_dall_e(avatar=request.properties, db=db)  # Browse image and attempt to cache the result
+            search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db)  # Browse image and attempt to cache the result
         else:                                                         # Cache hit
-            cache_hit = True
-            search_result = query_result
+            cache_hit: bool = True
+            search_result: AvatarResult = query_result
 
     result = AvatarResponse()
     result.data = search_result
