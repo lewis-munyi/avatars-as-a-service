@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 SQLITE_DB_PATH = "sqlite:///./aaas.sqlite.db"
 
@@ -11,8 +11,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-def get_db():
-    db = SessionLocal()
+def init_db():
+    Base.metadata.create_all(bind=engine, checkfirst=True) #checkfirst option to make sure that tables are only created if they don't exist
+
+def get_db() -> Session:
+    db: Session = SessionLocal()
     try:
         yield db
     finally:
