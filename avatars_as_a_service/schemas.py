@@ -8,14 +8,14 @@ from avatars_as_a_service.enums.AvatarFeatures import Mood, HeadShape, EyeColor,
 
 
 class Avatar(BaseModel):
-    skin_tone: Union[SkinTone, None]
-    head_shape: Union[HeadShape, None] = None
-    eye_color: Union[EyeColor, None] = None
-    smile_type: Union[SmileType, None] = None
-    nose_type: Union[NoseType, None] = None
-    glasses: Union[bool, None] = False
-    mood: Union[Mood, None] = Mood.FUN
-    description: Union[str, None] = None
+    skin_tone: SkinTone | None
+    head_shape: HeadShape | None = None
+    eye_color: EyeColor | None = None
+    smile_type: SmileType | None = None
+    nose_type: NoseType | None = None
+    glasses: bool | None = False
+    mood: Mood | None = Mood.FUN
+    description: str | None = None
 
     # Method used to generate a prompt string from the various properties supplied
     def generate_prompt(self) -> str:
