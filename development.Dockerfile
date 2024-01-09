@@ -32,10 +32,6 @@ ENV PATH="${PATH}:/root/.local/bin"
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-root --no-interaction
 
-# Create app database
-RUN mkdir -p avatars_as_a_service/database
-RUN touch avatars_as_a_service/database/aaas.sqlite.db
-
 # Expose the port on which the application will run
 EXPOSE 8000
 

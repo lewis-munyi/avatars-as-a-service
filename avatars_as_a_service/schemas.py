@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from avatars_as_a_service.enums.AvatarFeatures import Mood, HeadShape, EyeColor, SkinTone, SmileType, NoseType
 
+
 class Avatar(BaseModel):
     skin_tone: Union[SkinTone, None]
     head_shape: Union[HeadShape, None] = None
@@ -17,9 +18,9 @@ class Avatar(BaseModel):
     description: Union[str, None] = None
 
     # Method used to generate a prompt string from the various properties supplied
-    @property
     def generate_prompt(self) -> str:
-        if self.description and self.description != '':  # If a description is provided then it will override the other Avatar properties
+        if self.description and self.description != '':
+            # If a description is provided then it will override the other Avatar properties
             return self.description
 
         prompt = 'create an avatar for a person with the following description: '
@@ -49,9 +50,12 @@ class Avatar(BaseModel):
                 prompt += f'and make it official and/or office appropriate.'
 
         return prompt
-    # TODO: remove this from Avatar class and make it a util 
+
+    # TODO: remove this from Avatar class and make it a util
     def dall_e_2_search(self):
         try:
+            print('api key:')
+            print(os.getenv('OPENAI_API_KEY'))
             client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'), )
             response = client.images.generate(
                 model="dall-e-2",
@@ -76,13 +80,16 @@ class Avatar(BaseModel):
         features = f'{self.head_shape}+{self.eye_color}+{self.skin_tone}+{self.glasses}+{self.smile_type}+{self.nose_type}+{self.mood}'
         return str(hash(features))
 
+
 class AvatarResult(BaseModel):
     image_url: str = None
     image_hash: str = None
 
+
 class AvatarRequest(BaseModel):
-    properties: Avatar 
+    properties: Avatar
     disable_cache: bool = True
+
 
 class AvatarResponse(BaseModel):
     data: AvatarResult = None
