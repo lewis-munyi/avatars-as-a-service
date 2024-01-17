@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Depends
 from avatars_as_a_service.database.connection import get_db, init_db
 from avatars_as_a_service.search import avatar_search
@@ -14,7 +15,7 @@ async def startup_event():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World!"}
+    return {"message": 'Hello World!'}
 
 
 @app.post("/query")

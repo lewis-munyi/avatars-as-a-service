@@ -32,8 +32,8 @@ def search_cache(avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 
 
 
 def avatar_search(request: AvatarRequest, db: Session) -> AvatarResponse:
-    search_result: AvatarResult
-    cache_hit: bool = False
+    # search_result: AvatarResult
+    # cache_hit: bool = False
     prompt: str = request.properties.generate_prompt()
 
     if request.disable_cache:  # Search dall-e and don't cache the result
