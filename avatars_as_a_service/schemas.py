@@ -52,10 +52,8 @@ class Avatar(BaseModel):
         return prompt
 
     # TODO: remove this from Avatar class and make it a util
-    def dall_e_2_search(self):
+    def dall_e_search(self):
         try:
-            print('api key:')
-            print(os.getenv('OPENAI_API_KEY'))
             client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'), )
             response = client.images.generate(
                 model="dall-e-2",
@@ -88,7 +86,7 @@ class AvatarResult(BaseModel):
 
 class AvatarRequest(BaseModel):
     properties: Avatar
-    disable_cache: bool = True
+    disable_cache: bool = False
 
 
 class AvatarResponse(BaseModel):
