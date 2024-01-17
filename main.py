@@ -15,7 +15,7 @@ async def startup_event():
 
 @app.get("/")
 async def root():
-    return {"message": 'Hello World!'}
+    return {"message": "Hello World!"}
 
 
 @app.post("/query")
