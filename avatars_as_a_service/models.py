@@ -11,5 +11,5 @@ class Avatar(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
-    image_hash = Column(String, nullable=False)
+    image_hash = Column(String(30), nullable=False)
     image_url = Column(Text, nullable=False)

@@ -17,7 +17,7 @@ COPY . .
 
 # Uncomment the following lines if you are using Pip not poetry
 # Install the Python dependencies
-#RUN pip install -r requirements.txt
+# RUN pip install -r requirements.txt
 
 # Install poetry & packages
 RUN curl -sSL https://install.python-poetry.org | python3 -
