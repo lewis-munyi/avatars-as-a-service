@@ -1,4 +1,5 @@
 from typing import Any
+
 from sqlalchemy.orm import Session
 
 from avatars_as_a_service.models import Avatar
@@ -11,7 +12,7 @@ from avatars_as_a_service.schemas import (
 
 
 def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult:
-    result = avatar.dall_e_2_search()
+    result = avatar.dall_e_search()
 
     if (
         avatar.description is not None
@@ -26,7 +27,11 @@ def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult
 
 def write_to_cache(result: AvatarResult, db: Session) -> bool:
     try:
-        print("writing to cache query result")
+        # existing_model = db.query(Avatar).filter(Avatar.image_hash == result.image_hash).first()
+        #
+        # if existing_model:  # Item exists
+        #     existing_model.delete()
+
         avatar_model = Avatar(**dict(result))
         db.add(avatar_model)
         db.commit()
@@ -41,8 +46,8 @@ def search_cache(
 
 
 def avatar_search(request: AvatarRequest, db: Session) -> AvatarResponse:
-    # search_result: AvatarResult
-    # cache_hit: bool = False
+    search_result: AvatarResult
+    cache_hit: bool = False
     prompt: str = request.properties.generate_prompt()
 
     if request.disable_cache:  # Search dall-e and don't cache the result
