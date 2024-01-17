@@ -6,7 +6,7 @@ from avatars_as_a_service.schemas import Avatar as AvatarSchema, AvatarResult, A
 
 
 def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult:
-    result = avatar.dall_e_2_search()
+    result = avatar.dall_e_search()
 
     if avatar.description is not None:  # Directly search for description without caching
         return result
@@ -19,7 +19,11 @@ def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult
 
 def write_to_cache(result: AvatarResult, db: Session) -> bool:
     try:
-        print('writing to cache query result')
+        # existing_model = db.query(Avatar).filter(Avatar.image_hash == result.image_hash).first()
+        #
+        # if existing_model:  # Item exists
+        #     existing_model.delete()
+
         avatar_model = Avatar(**dict(result))
         db.add(avatar_model)
         db.commit()

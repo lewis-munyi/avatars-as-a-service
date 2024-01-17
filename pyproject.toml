@@ -10,6 +10,9 @@ fastapi = "^0.108.0"
 uvicorn = {extras = ["standard"], version = "^0.25.0"}
 openai = "^1.6.1"
 sqlalchemy = "^2.0.24"
+psycopg2 = "^2.9.9"
+pymysql = "^1.1.0"
+cryptography = "^41.0.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
