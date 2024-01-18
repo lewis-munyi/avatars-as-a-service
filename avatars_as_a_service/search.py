@@ -3,9 +3,12 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from avatars_as_a_service.models import Avatar
-from avatars_as_a_service.schemas import Avatar as AvatarSchema
-from avatars_as_a_service.schemas import (AvatarRequest, AvatarResponse,
-                                          AvatarResult)
+from avatars_as_a_service.schemas import (
+    Avatar as AvatarSchema,
+    AvatarResult,
+    AvatarRequest,
+    AvatarResponse,
+)
 
 
 def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult:

@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
-if db_string := os.getenv('DB_STRING'):
-    if 'sqlite' in db_string:
+if db_string := os.getenv("DB_STRING"):
+    if "sqlite" in db_string:
         engine = create_engine(db_string, connect_args={"check_same_thread": False})
     else:
         engine = create_engine(db_string)
@@ -18,7 +18,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-async def init_db():  # checkfirst option to make sure that tables are only created if they don't exist
+# checkfirst option to make sure that tables are only created if they don't exist
+async def init_db():
     Base.metadata.create_all(bind=engine, checkfirst=True)
 
 
