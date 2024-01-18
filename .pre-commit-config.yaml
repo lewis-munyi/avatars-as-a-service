@@ -1,0 +1,17 @@
+repos:
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v1.2.3
+      hooks:
+        -   id: trailing-whitespace
+
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        # language_version: python3.10
+        # args: ['--exclude', 'migrations, settings.py']
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8

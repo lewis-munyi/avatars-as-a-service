@@ -1,14 +1,22 @@
 from typing import Any
+
 from sqlalchemy.orm import Session
 
 from avatars_as_a_service.models import Avatar
-from avatars_as_a_service.schemas import Avatar as AvatarSchema, AvatarResult, AvatarRequest, AvatarResponse
+from avatars_as_a_service.schemas import (
+    Avatar as AvatarSchema,
+    AvatarResult,
+    AvatarRequest,
+    AvatarResponse,
+)
 
 
 def search_dall_e(avatar: AvatarSchema, db: Session, cache=True) -> AvatarResult:
     result = avatar.dall_e_search()
 
-    if avatar.description is not None:  # Directly search for description without caching
+    if (
+        avatar.description is not None
+    ):  # Directly search for description without caching
         return result
 
     if cache:
@@ -31,7 +39,9 @@ def write_to_cache(result: AvatarResult, db: Session) -> bool:
         raise RuntimeError("An unexpected DB error occurred: " + str(e))
 
 
-def search_cache(avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 100) -> Any:
+def search_cache(
+    avatar: AvatarSchema, db: Session, skip: int = 0, limit: int = 100
+) -> Any:
     return db.query(Avatar).filter(Avatar.image_hash == avatar.hash_avatar()).first()
 
 
@@ -41,12 +51,18 @@ def avatar_search(request: AvatarRequest, db: Session) -> AvatarResponse:
     prompt: str = request.properties.generate_prompt()
 
     if request.disable_cache:  # Search dall-e and don't cache the result
-        search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db, cache=False)
+        search_result: AvatarResult = search_dall_e(
+            avatar=request.properties, db=db, cache=False
+        )
 
     else:  # Search cache
         query_result = search_cache(avatar=request.properties, db=db)
-        if query_result is None:  # Cache miss: Browse image and attempt to cache the result
-            search_result: AvatarResult = search_dall_e(avatar=request.properties, db=db, cache=True)
+        if (
+            query_result is None
+        ):  # Cache miss: Browse image and attempt to cache the result
+            search_result: AvatarResult = search_dall_e(
+                avatar=request.properties, db=db, cache=True
+            )
         else:  # Cache hit
             cache_hit: bool = True
             search_result = AvatarResult()

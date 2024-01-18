@@ -1,0 +1,119 @@
+version: '3'
+services:
+    api:
+        build:
+          context: .
+          dockerfile: development.Dockerfile
+        container_name: 'fun-with-avatars.api'
+        volumes:
+            - .:/api/
+        ports:
+            - '8000:8000'
+        env_file: # https://stackoverflow.com/questions/58047984/why-do-i-need-to-declare-env-file-explicitely-in-docker-compose-yml
+            - .env
+        depends_on:
+            - postgres
+            - mysql
+        networks:
+            - fun-with-avatars-network
+        restart: always
+
+    mysql:
+        container_name: 'fun-with-avatars.mysql'
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '${MYSQL_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'mysql-db:/var/lib/mysql'
+            #- './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - fun-with-avatars-network
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+            retries: 3
+            timeout: 5s
+        restart: always
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: 'fun-with-avatars.phpmyadmin'
+        platform: linux/amd64
+        links:
+            - mysql
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: ${DB_PORT:-3306}
+            PMA_ARBITRARY: 1
+            restart: always
+        ports:
+            - '${PHPMYADMIN_PORT-8081}:80'
+        networks:
+            - fun-with-avatars-network
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        depends_on:
+            - mysql
+        restart: always
+
+    postgres:
+        image: postgres:15
+        container_name: 'fun-with-avatars.postgres'
+        ports:
+            - '${POSTGRES_PORT:-5432}:5432'
+        env_file: # https://stackoverflow.com/questions/58047984/why-do-i-need-to-declare-env-file-explicitely-in-docker-compose-yml
+            - .env
+        environment:
+            PGHOST: '${POSTGRES_HOST:-localhost}' # ?To understand why: https://stackoverflow.com/questions/72942519/alembic-migration-with-fastapi-docker-connection-to-port-5432-in-localhost-fa
+            PGPASSWORD: '${DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        restart: always
+        volumes:
+            - 'postgres-db:/var/lib/postgresql/data'
+            #- './tests/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql' # https://stackoverflow.com/questions/26598738/how-to-create-user-database-in-script-for-docker-postgres
+        networks:
+            - fun-with-avatars-network
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+            retries: 3
+            timeout: 5s
+            interval: 10s
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: 'fun-with-avatars.pgadmin'
+        restart: always
+        environment: # IMPORTANT! Use postgres container name as the host name when creating the server in pgadmin
+            PGADMIN_DEFAULT_EMAIL: '${PG_ADMIN_EMAIL:-admin@admin.com}'
+            PGADMIN_DEFAULT_PASSWORD: '${PG_ADMIN_PASSWORD:-root}'
+        ports:
+            - "${PGADMIN_PORT:-5050}:80"
+        depends_on:
+            - postgres
+        networks:
+            - fun-with-avatars-network
+        volumes:
+            - 'postgres-admin:/var/lib/pgadmin'
+
+networks:
+    fun-with-avatars-network:
+        driver: bridge
+
+volumes:
+    mysql-db:
+        driver: local
+    postgres-db:
+        driver: local
+    postgres-admin:
+        driver: local
